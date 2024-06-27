@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'payment.dart';
 
 class LiveRewardsPage extends StatelessWidget {
   @override
@@ -48,7 +49,12 @@ class LiveRewardsPage extends StatelessWidget {
           Center(
             child: InkWell(
               onTap: () {
-                // Add your onTap logic here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PaymentSelectionScreen(),
+                  ),
+                );
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
