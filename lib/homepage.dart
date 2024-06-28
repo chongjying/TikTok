@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
-import 'LIVE_rewards_page.dart'; // Import your LiveRewardsPage widget
-
+import 'LIVE_rewards_page.dart';
+import 'transaction.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+//Example for transaction History
+  final List<Map<String, String>> transactions = const [
+    {
+      'title': 'Subscription Payment',
+      'date': '2024-06-01',
+      'amount': '\$10.00'
+    },
+    {'title': 'Item Purchase', 'date': '2024-06-15', 'amount': '\$25.00'},
+    {
+      'title': 'Subscription Renewal',
+      'date': '2024-07-01',
+      'amount': '\$10.00'
+    },
+    // Add more transactions as needed
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +79,21 @@ class HomePage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LiveRewardsPage(), // Navigate to LiveRewardsPage
+                                builder: (context) =>
+                                    LiveRewardsPage(), // Navigate to LiveRewardsPage
                               ),
                             );
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Container(
-                              height: 120, // Increased height to accommodate icon
+                              height:
+                                  120, // Increased height to accommodate icon
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Coins',
                                     style: TextStyle(
                                       fontSize: 20,
@@ -103,7 +121,7 @@ class HomePage extends StatelessWidget {
                             height: 100,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: Text(
+                              child: const Text(
                                 'Get Coins >',
                                 style: TextStyle(
                                   fontSize: 15,
@@ -134,7 +152,8 @@ class HomePage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LiveRewardsPage(), // Navigate to LiveRewardsPage
+                                builder: (context) =>
+                                    LiveRewardsPage(), // Navigate to LiveRewardsPage
                               ),
                             );
                           },
@@ -146,7 +165,7 @@ class HomePage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'LIVE Rewards >',
                                     style: TextStyle(
                                       fontSize: 15,
@@ -155,7 +174,7 @@ class HomePage extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  Text(
+                                  const Text(
                                     'RM ',
                                     style: TextStyle(
                                       fontSize: 15,
@@ -176,7 +195,7 @@ class HomePage extends StatelessWidget {
                             height: 100,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: Text(
+                              child: const Text(
                                 'Others >',
                                 style: TextStyle(
                                   fontSize: 15,
@@ -199,7 +218,7 @@ class HomePage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Recent Transactions',
                   style: TextStyle(
                     fontSize: 30,
@@ -207,15 +226,44 @@ class HomePage extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                Text(
-                  'View All >',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            TransactionPage(transactions: transactions),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'View All >',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: transactions.length > 3 ? 3 : transactions.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(transactions[index]['title']!,
+                      style: const TextStyle(color: Colors.black)),
+                  subtitle: Text(transactions[index]['date']!,
+                      style: const TextStyle(color: Colors.grey)),
+                  trailing: Text(transactions[index]['amount']!,
+                      style: const TextStyle(color: Colors.black)),
+                  onTap: () {
+                    // You can add a detail view for each transaction if needed
+                  },
+                );
+              },
             ),
           ),
         ],
