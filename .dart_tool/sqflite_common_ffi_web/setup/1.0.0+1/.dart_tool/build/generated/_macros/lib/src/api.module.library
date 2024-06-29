@@ -1,0 +1,1 @@
+{"isEntrypoint":false,"deps":[],"parts":["_macros|lib/src/api/builders.dart","_macros|lib/src/api/code.dart","_macros|lib/src/api/diagnostic.dart","_macros|lib/src/api/exceptions.dart","_macros|lib/src/api/introspection.dart","_macros|lib/src/api/macros.dart"],"conditionalDeps":[],"sdkDeps":["async","collection"],"hasMain":false}

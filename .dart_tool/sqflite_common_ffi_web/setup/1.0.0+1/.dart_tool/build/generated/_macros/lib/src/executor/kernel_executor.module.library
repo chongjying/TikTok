@@ -1,0 +1,1 @@
+{"isEntrypoint":false,"deps":["_macros|lib/src/executor.dart","_macros|lib/src/executor/serialization.dart","_macros|lib/src/executor/isolated_executor.dart","_macros|lib/src/executor/process_executor.dart"],"parts":[],"conditionalDeps":[],"sdkDeps":["async","io","isolate","typed_data"],"hasMain":false}
