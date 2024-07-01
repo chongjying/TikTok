@@ -1,0 +1,1 @@
+{"isEntrypoint":false,"deps":["analyzer|lib/src/dart/element/element.dart","analyzer|lib/src/summary2/macro_type_location.dart","macros|lib/macros.dart"],"parts":[],"conditionalDeps":[],"sdkDeps":[],"hasMain":false}
