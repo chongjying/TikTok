@@ -1,66 +1,32 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
-import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  var path = 'lib/transaction.db';
+Future<Database> initializeDatabase() async {
   if (kIsWeb) {
     // Change default factory on the web
     databaseFactory = databaseFactoryFfiWeb;
-    path = 'transaction.db';
   }
 
-  final database = await initializeDatabase();
-
-  // Example usage:
-  final transaction = Transaction(
-    referenceNo: 123456,
-    sender: 'Alice',
-    receiver: 'Bob',
-    details: 'Payment for services',
-    createdTime: DateTime.now().toIso8601String(),
-    status: 'Completed',
+  final path = await getDatabasePath();
+  return openDatabase(
+    path,
+    onCreate: (db, version) {
+      return db.execute(
+        'CREATE TABLE transactions(id INTEGER PRIMARY KEY, referenceNo INTEGER, sender TEXT, receiver TEXT, details TEXT, created_time TEXT, status TEXT)',
+      );
+    },
+    version: 1,
   );
-
-  await insertTransaction(database, transaction);
-
-  final transactions = await getTransactions(database);
-  print('Transactions: $transactions');
-
-  await updateTransaction(database, transactions.first.copyWith(receiver: 'Charlie'));
-
-  final updatedTransactions = await getTransactions(database);
-  print('Updated Transactions: $updatedTransactions');
-
-  await deleteTransaction(database, updatedTransactions.first.id!);
-
-  final remainingTransactions = await getTransactions(database);
-  print('Remaining Transactions: $remainingTransactions');
-
-  await database.close(); // Close the database connection
 }
 
-Future<Database> initializeDatabase() async {
-  try {
-    final path = join(await getDatabasesPath(), 'transaction.db');
-
-    return openDatabase(
-      path,
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE transactions(id INTEGER PRIMARY KEY, referenceNo INTEGER, sender TEXT, receiver TEXT, details TEXT, created_time TEXT, status TEXT)',
-        );
-      },
-      version: 1,
-    );
-  } catch (e) {
-    print('Error initializing database: $e');
-    throw e; // Rethrow the exception to propagate it further if needed
+Future<String> getDatabasePath() async {
+  if (kIsWeb) {
+    return 'transaction.db';
+  } else {
+    return join(await getDatabasesPath(), 'transaction.db');
   }
 }
 

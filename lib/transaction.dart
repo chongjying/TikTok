@@ -1,54 +1,73 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'package:flutter/widgets.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'transaction_database.dart';
 
+class TransactionPage extends StatefulWidget {
+  const TransactionPage({super.key});
 
-class TransactionPage extends StatelessWidget {
-  final List<Map<String, String>> transactions;
+  @override
+  _TransactionPageState createState() => _TransactionPageState();
+}
 
-  const TransactionPage({super.key, required this.transactions});
+class _TransactionPageState extends State<TransactionPage> {
+  late Future<List<Transaction>> _transactions;
+
+  @override
+  void initState() {
+    super.initState();
+    _transactions = _fetchTransactions();
+  }
+
+  Future<List<Transaction>> _fetchTransactions() async {
+    final database = await initializeDatabase();
+    return getTransactions(database);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.0),
-            child: Center(
-              child: Text(
-                'Transaction History',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: transactions.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(transactions[index]['title']!,
-                      style: const TextStyle(color: Colors.white)),
-                  subtitle: Text(transactions[index]['date']!,
-                      style: const TextStyle(color: Colors.grey)),
-                  trailing: Text(transactions[index]['amount']!,
-                      style: const TextStyle(color: Colors.white)),
-                  onTap: () {
-                    // You can add a detail view for each transaction if needed
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: const Text('Transaction History'),
+        centerTitle: true,
+        backgroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FutureBuilder<List<Transaction>>(
+          future: _transactions,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No transactions available.'));
+            } else {
+              final transactions = snapshot.data!;
+              return ListView.builder(
+                itemCount: transactions.length,
+                itemBuilder: (context, index) {
+                  final transaction = transactions[index];
+                  return Card(
+                    color: Colors.grey[850],
+                    child: ListTile(
+                      title: Text(transaction.details,
+                          style: const TextStyle(color: Colors.white)),
+                      subtitle: Text(transaction.createdTime,
+                          style: const TextStyle(color: Colors.grey)),
+                      trailing: Text('\$${transaction.referenceNo}',
+                          style: const TextStyle(color: Colors.white)),
+                      onTap: () {
+                        // Add a detail view for each transaction if needed
+                      },
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 }
