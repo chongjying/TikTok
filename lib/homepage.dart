@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'LIVE_rewards_page.dart';
 import 'transaction.dart';
+import 'tiktok_wallet.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key});
 
-//Example for transaction History
+  // Example for transaction History
   final List<Map<String, String>> transactions = const [
     {
       'title': 'Subscription Payment',
@@ -24,10 +25,31 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, // Set background color to white
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 40.0, right: 20.0),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.account_balance_wallet,
+                  color: Colors.black,
+                ),
+                iconSize: 38.0, // Adjust the icon size as needed
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TikTokWallet(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20.0),
             child: Center(
