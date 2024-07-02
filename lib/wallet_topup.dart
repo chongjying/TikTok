@@ -81,6 +81,7 @@ class WalletTopUp extends StatelessWidget {
             const Text(
               'Select Amount:',
               style: TextStyle(
+                color: Colors.black,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
