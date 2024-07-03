@@ -64,29 +64,18 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text(
-              'Balance',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ),
+
           Center(
             child: Container(
               margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 16), // Adjusted padding
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Left Column
-                  Flexible(
+                  Expanded(
                     flex: 1,
                     child: GestureDetector(
-                        onTap: () {
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -96,14 +85,16 @@ class HomePage extends StatelessWidget {
                       },
                       child: Container(
                         height: 120, // Shorter height for left column
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.black,
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(16),
-              bottomLeft: Radius.circular(16))
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            bottomLeft: Radius.circular(16),
+                          ),
                         ),
                         child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 8), // Adjusted padding
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -117,26 +108,26 @@ class HomePage extends StatelessWidget {
                                       width: 30,
                                       height: 30,
                                     ),
-                                    const SizedBox(width: 8), // Space between the image and text
+                                    const SizedBox(width: 4), // Space between the image and text
                                     const Text(
                                       'Coins',
                                       style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 16), // Space between the two rows
+                                const SizedBox(height: 8), // Space between the two rows
 
                                 // Second Row (Numerical figure)
                                 const Text(
                                   '1000', // Replace with a dynamic number if needed
                                   style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
                                   ),
                                 ),
                               ],
@@ -146,9 +137,8 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(), // Spacing between columns
                   // Middle Column
-                  Flexible(
+                  Expanded(
                     flex: 2,
                     child: Container(
                       height: 150, // Taller height for middle column
@@ -163,7 +153,7 @@ class HomePage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                'LIVE Rewards',
+                                'Balance',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -184,9 +174,8 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(), // Spacing between columns
                   // Right Column
-                  Flexible(
+                  Expanded(
                     flex: 1,
                     child: GestureDetector(
                       onTap: () {
@@ -199,36 +188,37 @@ class HomePage extends StatelessWidget {
                       },
                       child: Container(
                         height: 120, // Shorter height for right column
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.black,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(16),
-              bottomRight: Radius.circular(16))
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(16),
+                            bottomRight: Radius.circular(16),
+                          ),
                         ),
                         child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 8), // Adjusted padding
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                // First Row (Image and Title side by side)
                                 const Text(
                                   'LIVE Rewards', // Replace with a dynamic number if needed
                                   style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
                                   ),
                                 ),
                                 const SizedBox(height: 16), // Space between the two rows
 
                                 // Second Row (Numerical figure)
                                 const Text(
-                                  '1000', // Replace with a dynamic number if needed
+                                  'RM 10.00', // Replace with a dynamic number if needed
                                   style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
                                   ),
                                 ),
                               ],
