@@ -12,6 +12,7 @@ class Transaction {
   final String details;
   final String createdTime;
   final String status;
+  final double amount;
 
   Transaction({
     this.id,
@@ -21,6 +22,7 @@ class Transaction {
     required this.details,
     required this.createdTime,
     required this.status,
+    required this.amount,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +32,7 @@ class Transaction {
       'sender': sender,
       'receiver': receiver,
       'details': details,
+      'amount': amount,
       'created_time': createdTime,
       'status': status,
     };
@@ -53,7 +56,7 @@ Future<Database> initializeDatabase() async {
       options: OpenDatabaseOptions(
         onCreate: (db, version) async {
           await db.execute(
-            'CREATE TABLE transactions(id INTEGER PRIMARY KEY, referenceNo INTEGER, sender TEXT, receiver TEXT, details TEXT, created_time TEXT, status TEXT)',
+            'CREATE TABLE transactions(id INTEGER PRIMARY KEY, referenceNo INTEGER, sender TEXT, receiver TEXT, details TEXT, amount REAL, created_time TEXT, status TEXT)',
           );
         },
         onOpen: (db) async {
@@ -76,6 +79,7 @@ Future<List<Transaction>> getTransactions() async {
       sender: maps[i]['sender'],
       receiver: maps[i]['receiver'],
       details: maps[i]['details'],
+      amount: maps[i]['amount'],
       createdTime: maps[i]['created_time'],
       status: maps[i]['status'],
     );

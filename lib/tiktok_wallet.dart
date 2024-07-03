@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok1/transaction_details.dart';
+import 'transaction_database.dart';
 import 'transaction.dart';
 import 'wallet_topup.dart';
 
-class TikTokWallet extends StatelessWidget {
-  const TikTokWallet({super.key});
+class TikTokWallet extends StatefulWidget {
+  const TikTokWallet({Key? key}) : super(key: key);
 
-  // Example for transaction history
-  final List<Map<String, String>> transactions = const [
-    {'title': 'Subscription Payment', 'date': '2024-06-01', 'amount': '\$10.00'},
-    {'title': 'Item Purchase', 'date': '2024-06-15', 'amount': '\$25.00'},
-    {'title': 'Subscription Renewal', 'date': '2024-07-01', 'amount': '\$10.00'},
-    // Add more transactions as needed
-  ];
+  @override
+  _TikTokWalletState createState() => _TikTokWalletState();
+}
+
+class _TikTokWalletState extends State<TikTokWallet> {
+  late Future<List<Transaction>> _transactions; // Define _transactions here
+
+  @override
+  void initState() {
+    super.initState();
+    _transactions = _fetchTransactions(); // Initialize _transactions in initState
+  }
+
+  Future<List<Transaction>> _fetchTransactions() async {
+    return getTransactions(); // Replace with your method to fetch transactions
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +73,8 @@ class TikTokWallet extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
+                              children: const [
+                                Text(
                                   'Balance',
                                   style: TextStyle(
                                     fontSize: 20,
@@ -71,8 +82,8 @@ class TikTokWallet extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                const Text(
+                                SizedBox(height: 8),
+                                Text(
                                   'RM0.00',
                                   style: TextStyle(
                                     fontSize: 20,
@@ -136,8 +147,8 @@ class TikTokWallet extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
+                              children: const [
+                                Text(
                                   'TikTok Points >',
                                   style: TextStyle(
                                     fontSize: 15,
@@ -145,8 +156,8 @@ class TikTokWallet extends StatelessWidget {
                                     color: Colors.grey,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                const Text(
+                                SizedBox(height: 8),
+                                Text(
                                   '0',
                                   style: TextStyle(
                                     fontSize: 15,
@@ -203,20 +214,48 @@ class TikTokWallet extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: transactions.length > 3 ? 3 : transactions.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(transactions[index]['title']!,
-                      style: const TextStyle(color: Colors.black)),
-                  subtitle: Text(transactions[index]['date']!,
-                      style: const TextStyle(color: Colors.grey)),
-                  trailing: Text(transactions[index]['amount']!,
-                      style: const TextStyle(color: Colors.black)),
-                  onTap: () {
-                    // You can add a detail view for each transaction if needed
-                  },
-                );
+            child: FutureBuilder<List<Transaction>>(
+              future: _transactions,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No transactions available.'));
+                } else {
+                  final transactions = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: transactions.length > 3 ? 3 : transactions.length,
+                    itemBuilder: (context, index) {
+                      final transaction = transactions[index];
+                      String formattedAmount = transaction.amount.toStringAsFixed(2);
+                      return Card(
+                        color: Colors.grey[300],
+                        child: ListTile(
+                          title: Text(transaction.details, style: const TextStyle(color: Colors.black)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(transaction.createdTime, style: const TextStyle(color: Colors.grey)),
+                              Text('\$$formattedAmount', style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
+                          trailing: Text('\$${transaction.referenceNo}', style: const TextStyle(color: Colors.black)),
+                          onTap: () {
+                            // Navigate to transaction detail page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TransactionDetailPage(transaction: transaction),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),

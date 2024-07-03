@@ -20,14 +20,15 @@ class WalletTopUp extends StatelessWidget {
     }
 
     void handleTopUpSubmit() async {
-      int amount = int.tryParse(_amountController.text) ?? 0;
-      if (amount > 0) {
+      double _amount = double.tryParse(_amountController.text) ?? 0;
+      if (_amount > 0) {
         // Insert the transaction into the database
         Transaction transaction = Transaction(
           referenceNo: DateTime.now().millisecondsSinceEpoch,
           sender: 'User',
           receiver: 'TikTok Wallet',
-          details: 'Top-up RM$amount',
+          details: 'Top-up RM$_amount',
+          amount: _amount,
           createdTime: DateTime.now().toIso8601String(),
           status: 'Completed',
         );
@@ -36,7 +37,7 @@ class WalletTopUp extends StatelessWidget {
           await insertTransaction(transaction);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Top-up RM$amount successfully!'),
+              content: Text('Top-up RM$_amount successfully!'),
             ),
           );
         } catch (e) {

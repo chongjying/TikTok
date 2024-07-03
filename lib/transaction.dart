@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'transaction_database.dart';
+import 'transaction_details.dart';
 
 class TransactionPage extends StatefulWidget {
-  const TransactionPage({super.key});
+  const TransactionPage({Key? key}) : super(key: key);
 
   @override
   _TransactionPageState createState() => _TransactionPageState();
@@ -24,11 +25,12 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Transaction History'),
+        title: const Text('Transaction History', style: TextStyle(color: Colors.black)),
         centerTitle: true,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -47,17 +49,28 @@ class _TransactionPageState extends State<TransactionPage> {
                 itemCount: transactions.length,
                 itemBuilder: (context, index) {
                   final transaction = transactions[index];
+                  String formattedAmount = transaction.amount.toStringAsFixed(2);
                   return Card(
-                    color: Colors.grey[850],
+                    color: Colors.grey[300],
                     child: ListTile(
                       title: Text(transaction.details,
-                          style: const TextStyle(color: Colors.white)),
-                      subtitle: Text(transaction.createdTime,
-                          style: const TextStyle(color: Colors.grey)),
+                          style: const TextStyle(color: Colors.black)),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(transaction.createdTime, style: const TextStyle(color: Colors.grey)),
+                          Text('\$$formattedAmount', style: const TextStyle(color: Colors.black)),
+                        ],
+                      ),
                       trailing: Text('\$${transaction.referenceNo}',
-                          style: const TextStyle(color: Colors.white)),
+                          style: const TextStyle(color: Colors.black)),
                       onTap: () {
-                        // Add a detail view for each transaction if needed
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TransactionDetailPage(transaction: transaction),
+                          ),
+                        );
                       },
                     ),
                   );

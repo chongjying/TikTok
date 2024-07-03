@@ -1,33 +1,58 @@
 import 'package:flutter/material.dart';
 import 'LIVE_rewards_page.dart';
 import 'transaction.dart';
+import 'tiktok_wallet.dart';
+import 'transaction_database.dart';
+import 'transaction_details.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key});
 
-//Example for transaction History
-  final List<Map<String, String>> transactions = const [
-    {
-      'title': 'Subscription Payment',
-      'date': '2024-06-01',
-      'amount': '\$10.00'
-    },
-    {'title': 'Item Purchase', 'date': '2024-06-15', 'amount': '\$25.00'},
-    {
-      'title': 'Subscription Renewal',
-      'date': '2024-07-01',
-      'amount': '\$10.00'
-    },
-    // Add more transactions as needed
-  ];
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late Future<List<Transaction>> _transactions; // Define _transactions here
+
+  @override
+  void initState() {
+    super.initState();
+    _transactions = _fetchTransactions(); // Initialize _transactions in initState
+  }
+
+   Future<List<Transaction>> _fetchTransactions() async {
+    return getTransactions(); // Replace with your method to fetch transactions
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, 
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 40.0, right: 20.0),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.account_balance_wallet,
+                  color: Colors.black,
+                ),
+                iconSize: 38.0, // Adjust the icon size as needed
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TikTokWallet(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20.0),
             child: Center(
@@ -248,20 +273,46 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: transactions.length > 3 ? 3 : transactions.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(transactions[index]['title']!,
-                      style: const TextStyle(color: Colors.black)),
-                  subtitle: Text(transactions[index]['date']!,
-                      style: const TextStyle(color: Colors.grey)),
-                  trailing: Text(transactions[index]['amount']!,
-                      style: const TextStyle(color: Colors.black)),
-                  onTap: () {
-                    // You can add a detail view for each transaction if needed
-                  },
-                );
+            child: FutureBuilder<List<Transaction>>(
+              future: _transactions,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No transactions available.'));
+                } else {
+                  final transactions = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: transactions.length > 3 ? 3 : transactions.length,
+                    itemBuilder: (context, index) {
+                      final transaction = transactions[index];
+                      String formattedAmount = transaction.amount.toStringAsFixed(2);
+                      
+                      return ListTile(
+                        title: Text(transaction.details, style: const TextStyle(color: Colors.black)),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(transaction.createdTime, style: const TextStyle(color: Colors.grey)),
+                            Text('\$$formattedAmount', style: const TextStyle(color: Colors.black)),
+                          ],
+                        ),
+                        trailing: Text(transaction.referenceNo.toString(), style: const TextStyle(color: Colors.black)),
+                        onTap: () {
+                          // Navigate to transaction detail page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TransactionDetailPage(transaction: transaction),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
