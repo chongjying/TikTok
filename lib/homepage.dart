@@ -30,242 +30,84 @@ class HomePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 40.0, right: 20.0),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(
-                  Icons.account_circle,
-                  color: Colors.black,
-                ),
-                iconSize: 38.0, // Adjust the icon size as needed
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TikTokWallet(),
+          // Black background section
+          Container(
+            color: Colors.black,
+            padding: const EdgeInsets.only(top: 40.0, left: 20.0, right: 20.0, bottom: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'WELCOME, [XXX]',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.0),
-            child: Center(
-              child: Text(
-                'WELCOME, [XXX]',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ),
-
-          Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 16), // Adjusted padding
-              child: Row(
-                children: [
-                  // Left Column
-                  Expanded(
-                    flex: 1,
-                    child: GestureDetector(
-                      onTap: () {
+                    IconButton(
+                      icon: const Icon(
+                        Icons.account_circle,
+                        color: Colors.white,
+                      ),
+                      iconSize: 38.0, // Adjust the icon size as needed
+                      onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CoinPurchasePage(),
+                            builder: (context) => TikTokWallet(),
                           ),
                         );
                       },
-                      child: Container(
-                        height: 120, // Shorter height for left column
-                        decoration: const BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            bottomLeft: Radius.circular(16),
-                          ),
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8), // Adjusted padding
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // First Row (Image and Title side by side)
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/coins.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                    const SizedBox(width: 4), // Space between the image and text
-                                    const Text(
-                                      'Coins',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8), // Space between the two rows
-
-                                // Second Row (Numerical figure)
-                                const Text(
-                                  '1000', // Replace with a dynamic number if needed
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
                     ),
-                  ),
-                  // Middle Column
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      height: 150, // Taller height for middle column
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 180, 180, 180),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Balance',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'RM ',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Right Column
-                  Expanded(
-                    flex: 1,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LiveRewardsPage(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: 120, // Shorter height for right column
-                        decoration: const BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(16),
-                            bottomRight: Radius.circular(16),
-                          ),
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8), // Adjusted padding
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'LIVE Rewards', // Replace with a dynamic number if needed
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                const SizedBox(height: 16), // Space between the two rows
-
-                                // Second Row (Numerical figure)
-                                const Text(
-                                  'RM 10.00', // Replace with a dynamic number if needed
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 0.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+                  ],
+                ),
+                const SizedBox(height: 30),
                 const Text(
-                  'Recent Transactions',
+                  'Balance',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TransactionPage(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'View All >',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
+                const SizedBox(height: 8),
+                const Text(
+                  'RM 1234.56', // Replace with a dynamic number if needed
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
+                ),
+                const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+            _buildIconColumn(context, Icons.arrow_downward, 'Receive Money', ReceiveMoneyPage()),
+            _buildIconColumn(context, Icons.arrow_upward, 'Send Money', SendMoneyPage()),
+            _buildIconColumn(context, Icons.monetization_on, 'Coin', CoinPurchasePage()),
+            _buildIconColumn(context, Icons.card_giftcard, 'Live Reward', LiveRewardPage()),
+                  ],
                 ),
               ],
             ),
           ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 0.0),
+            child: Text(
+              'Recent Transactions',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
               itemCount: transactions.length > 3 ? 3 : transactions.length,
@@ -285,6 +127,81 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIconColumn(BuildContext context, IconData icon, String label, Widget page) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        );
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(icon, size: 40.0),
+          Container(
+            margin: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+class ReceiveMoneyPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Receive Money'),
+      ),
+      body: Center(
+        child: Text('Receive Money Page'),
+      ),
+    );
+  }
+}
+
+
+class SendMoneyPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Send Money'),
+      ),
+      body: Center(
+        child: Text('Send Money Page'),
+      ),
+    );
+  }
+}
+
+
+class LiveRewardPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Live Reward'),
+      ),
+      body: Center(
+        child: Text('Live Reward Page'),
       ),
     );
   }
