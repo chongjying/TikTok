@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'LIVE_rewards_page.dart';
+import 'coin_purchase.dart';
 import 'transaction.dart';
 import 'tiktok_wallet.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key});
+  const HomePage({Key? key}) : super(key: key);
 
   // Example for transaction History
   final List<Map<String, String>> transactions = const [
@@ -35,7 +36,7 @@ class HomePage extends StatelessWidget {
               alignment: Alignment.topRight,
               child: IconButton(
                 icon: const Icon(
-                  Icons.account_balance_wallet,
+                  Icons.account_circle,
                   color: Colors.black,
                 ),
                 iconSize: 38.0, // Adjust the icon size as needed
@@ -77,159 +78,165 @@ class HomePage extends StatelessWidget {
           Center(
             child: Container(
               margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.all(16),
-              child: Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(1),
-                  1: FlexColumnWidth(1),
-                },
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // First row (merged)
-                  TableRow(
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                    ),
-                    children: [
-                      TableCell(
-                        verticalAlignment: TableCellVerticalAlignment.middle,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    LiveRewardsPage(), // Navigate to LiveRewardsPage
-                              ),
-                            );
-                          },
+                  // Left Column
+                  Flexible(
+                    flex: 1,
+                    child: GestureDetector(
+                        onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CoinPurchasePage(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 120, // Shorter height for left column
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(16),
+              bottomLeft: Radius.circular(16))
+                        ),
+                        child: Center(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Container(
-                              height:
-                                  120, // Increased height to accommodate icon
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Coins',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // First Row (Image and Title side by side)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/coins.png',
+                                      width: 30,
+                                      height: 30,
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Image.asset(
-                                    'assets/coins.png',
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      TableCell(
-                        verticalAlignment: TableCellVerticalAlignment.middle,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Container(
-                            height: 100,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: const Text(
-                                'Get Coins >',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
+                                    const SizedBox(width: 8), // Space between the image and text
+                                    const Text(
+                                      'Coins',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Second row
-                  TableRow(
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                    ),
-                    children: [
-                      TableCell(
-                        verticalAlignment: TableCellVerticalAlignment.middle,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    LiveRewardsPage(), // Navigate to LiveRewardsPage
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Container(
-                              height: 100,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'LIVE Rewards >',
-                                    style: TextStyle(
-                                      fontSize: 15,
+                                const SizedBox(height: 16), // Space between the two rows
+
+                                // Second Row (Numerical figure)
+                                const Text(
+                                  '1000', // Replace with a dynamic number if needed
+                                  style: TextStyle(
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.grey,
-                                    ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'RM ',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                      TableCell(
-                        verticalAlignment: TableCellVerticalAlignment.middle,
+                    ),
+                  ),
+                  const SizedBox(), // Spacing between columns
+                  // Middle Column
+                  Flexible(
+                    flex: 2,
+                    child: Container(
+                      height: 150, // Taller height for middle column
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 180, 180, 180),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Container(
-                            height: 100,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: const Text(
-                                'Others >',
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'LIVE Rewards',
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
+                                  color: Colors.white,
                                 ),
                               ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'RM ',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(), // Spacing between columns
+                  // Right Column
+                  Flexible(
+                    flex: 1,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LiveRewardsPage(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 120, // Shorter height for right column
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(16),
+              bottomRight: Radius.circular(16))
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // First Row (Image and Title side by side)
+                                const Text(
+                                  'LIVE Rewards', // Replace with a dynamic number if needed
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 16), // Space between the two rows
+
+                                // Second Row (Numerical figure)
+                                const Text(
+                                  '1000', // Replace with a dynamic number if needed
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
