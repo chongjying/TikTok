@@ -18,8 +18,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<List<Transaction>> _fetchTransactions() async {
-    final database = await initializeDatabase();
-    return getTransactions(database);
+    return getTransactions();
   }
 
   @override
