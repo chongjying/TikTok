@@ -10,7 +10,6 @@ class TikTokWallet extends StatelessWidget {
     {'title': 'Subscription Payment', 'date': '2024-06-01', 'amount': '\$10.00'},
     {'title': 'Item Purchase', 'date': '2024-06-15', 'amount': '\$25.00'},
     {'title': 'Subscription Renewal', 'date': '2024-07-01', 'amount': '\$10.00'},
-    // Add more transactions as needed
   ];
 
   @override
