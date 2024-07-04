@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok1/transaction_details.dart';
 import 'transaction_database.dart';
-import 'transaction.dart';
+import 'transaction_history.dart';
 import 'wallet_topup.dart';
 
 class TikTokWallet extends StatefulWidget {

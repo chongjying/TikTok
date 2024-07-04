@@ -33,7 +33,6 @@ class _PaymentSelectionScreenState extends State<PaymentSelectionScreen> {
             SizedBox(height: 20),
             _buildPaymentOption('TikTok Wallet'),
             _buildPaymentOption('Credit /Debit Card'),
-            _buildPaymentOption('Touch \'n Go ewallet'),
             _buildPaymentOption('Online Banking'),
             _buildPaymentOption('Postpaid (Buy Now, Pay Later)'),
             SizedBox(height: 20),

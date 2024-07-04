@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'LIVE_rewards_page.dart'; // Ensure this import is correct
-import 'transaction.dart';
+import 'LIVE_rewards_page.dart'; 
+import 'transaction_history.dart';
 import 'tiktok_wallet.dart';
 import 'transaction_database.dart';
 import 'transaction_details.dart';
-import 'transaction.dart'; // Ensure this import is correct
+import 'wallet_topup.dart';
+import 'coin_purchase.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<List<Transaction>> _transactions;
+  int tiktokPoints = 1001; // Example TikTok points
 
   @override
   void initState() {
@@ -26,6 +28,34 @@ class _HomePageState extends State<HomePage> {
     return getTransactions(); // Replace with your method to fetch transactions
   }
 
+  Widget _buildIconColumn(BuildContext context, IconData icon, String label, Widget page) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        );
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(icon, size: 40.0),
+          Container(
+            margin: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,105 +63,143 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Black background section
-          Container(
-            color: Colors.black,
-            padding: const EdgeInsets.only(top: 40.0, left: 20.0, right: 20.0, bottom: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'WELCOME, [XXX]', // Replace [XXX] with a dynamic name if needed
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+          ClipRRect(
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16) , bottomRight: Radius.circular(16)), 
+            child: Container(
+              color: Colors.black,
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'WELCOME, [XXX]', // Replace [XXX] with a dynamic name if needed
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.account_circle,
-                        color: Colors.white,
+                      IconButton(
+                        icon: const Icon(
+                          Icons.account_circle,
+                          color: Colors.white,
+                        ),
+                        iconSize: 38.0,
+                        onPressed: () {
+                          // Navigate to TikTok Points page or implement functionality
+                        },
                       ),
-                      iconSize: 38.0,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const TikTokWallet(),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Balance',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                const Text(
-                  'Balance',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                          const SizedBox(height: 8),
+                          Text(
+                            'RM 1234.56', // Replace with a dynamic number if needed
+                            style: const TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Implement your top-up functionality here
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const Text(
+                              'TikTok Points >',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '0101010',
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'RM 1234.56', // Replace with a dynamic number if needed
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildIconColumn(context, Icons.add_box, 'Top Up', WalletTopUp()),
+                      _buildIconColumn(context, Icons.arrow_downward, 'Receive Money', ReceiveMoneyPage()),
+                      _buildIconColumn(context, Icons.arrow_upward, 'Send Money', SendMoneyPage()),
+                      _buildIconColumn(context, Icons.monetization_on, 'Coin', CoinPurchasePage()),
+                      _buildIconColumn(context, Icons.card_giftcard, 'Live Reward', LiveRewardsPage()),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildIconColumn(context, Icons.arrow_downward, 'Receive Money', ReceiveMoneyPage()),
-                    _buildIconColumn(context, Icons.arrow_upward, 'Send Money', SendMoneyPage()),
-                    _buildIconColumn(context, Icons.monetization_on, 'Coin', CoinPurchasePage()),
-                    _buildIconColumn(context, Icons.card_giftcard, 'Live Reward', LiveRewardPage()),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 0.0),
-            child: Text(
-              'Recent Transactions',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+                ],
               ),
             ),
           ),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TransactionPage(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Recent Transactions',
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                );
-              },
-              child: const Text(
-                'View All >',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
                 ),
-              ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TransactionPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'View All >',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+          const SizedBox(height: 10),
           Expanded(
             child: FutureBuilder<List<Transaction>>(
               future: _transactions,
@@ -149,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       final transaction = transactions[index];
                       String formattedAmount = transaction.amount.toStringAsFixed(2);
-                      
+
                       return ListTile(
                         title: Text(transaction.details, style: const TextStyle(color: Colors.black)),
                         subtitle: Column(
@@ -181,34 +249,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Widget _buildIconColumn(BuildContext context, IconData icon, String label, Widget page) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => page),
-      );
-    },
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Icon(icon, size: 40.0),
-        Container(
-          margin: const EdgeInsets.only(top: 8.0),
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12.0,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
 class ReceiveMoneyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -216,8 +256,20 @@ class ReceiveMoneyPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Receive Money'),
       ),
-      body: const Center(
-        child: Text('Receive Money Page'),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text('Receive Money Page'),
+            ElevatedButton(
+              onPressed: () {
+                // Implement your top-up functionality here
+              },
+              child: const Text('Top Up'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -237,30 +289,4 @@ class SendMoneyPage extends StatelessWidget {
   }
 }
 
-class CoinPurchasePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Coin Purchase'),
-      ),
-      body: const Center(
-        child: Text('Coin Purchase Page'),
-      ),
-    );
-  }
-}
 
-class LiveRewardPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Live Reward'),
-      ),
-      body: const Center(
-        child: Text('Live Reward Page'),
-      ),
-    );
-  }
-}

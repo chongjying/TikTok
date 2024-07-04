@@ -18,7 +18,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 233, 233, 233),
+      backgroundColor: Color.fromARGB(255, 0, 0, 0),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40.0), // Overall padding for vertical centering
         child: Column(
@@ -30,7 +30,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
               child: Row(
                 children: <Widget>[
                   IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.black),
+                    icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 229, 229, 229)),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -42,7 +42,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: const Color.fromARGB(255, 255, 255, 255),
                         ),
                       ),
                     ),
@@ -57,7 +57,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
               margin: const EdgeInsets.symmetric(horizontal: 20.0), // Horizontal margin
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: const Color.fromARGB(255, 41, 41, 41),
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               child: Column(
@@ -76,7 +76,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
                         style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Color.fromARGB(255, 255, 255, 255),
                         ),
                       ),
                     ],
@@ -87,7 +87,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
                       '0',
                       style: TextStyle(
                         fontSize: 30,
-                        color: Colors.black,
+                        color: const Color.fromARGB(255, 255, 255, 255),
                       ),
                     ),
                   ),
@@ -102,7 +102,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
               margin: const EdgeInsets.symmetric(horizontal: 20.0), // Horizontal margin
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: const Color.fromARGB(255, 41, 41, 41),
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               child: Column(
@@ -113,11 +113,11 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 139, 139, 139),
+                      color: Color.fromARGB(255, 228, 228, 228),
                     ),
                   ),
                   Divider(
-                    color: Color.fromARGB(255, 139, 139, 139),
+                    color: Color.fromARGB(255, 228, 228, 228),
                     thickness: 0.3,
                   ),
                   SizedBox(height: 10),

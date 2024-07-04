@@ -5,21 +5,33 @@ class LiveRewardsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Center(
-              child: Text(
-                'Total Balance',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+          Container(
+            padding: const EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0, bottom: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IconButton(
+                    icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 229, 229, 229)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                SizedBox(height: 100), // Adjust height as needed
+                Center(
+                  child: Text(
+                    'Total Balance',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
           const Center(
@@ -29,7 +41,7 @@ class LiveRewardsPage extends StatelessWidget {
                 'RM 0.00',
                 style: TextStyle(
                   fontSize: 30,
-                  color: Colors.black,
+                  color: Color.fromARGB(255, 255, 255, 255),
                 ),
               ),
             ),
@@ -41,7 +53,7 @@ class LiveRewardsPage extends StatelessWidget {
                 'Accumulated Diamonds: 0',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.black,
+                  color: Color.fromARGB(255, 255, 255, 255),
                 ),
               ),
             ),
@@ -66,7 +78,6 @@ class LiveRewardsPage extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    const SizedBox(width: 20),
                     const Text(
                       'Withdraw',
                       style: TextStyle(
