@@ -157,7 +157,7 @@ class WalletTopUp extends StatelessWidget {
                   vertical: 16,
                 ),
               ),
-              child: const Text('Top Up Wallet'),
+              child: const Text('Top Up'),
             ),
           ],
         ),
