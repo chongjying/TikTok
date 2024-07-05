@@ -11,11 +11,7 @@ class WalletTopUp extends StatelessWidget {
 
     void handleTopUp(int amount) {
       _amountController.text = amount.toString();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Top-up RM$amount'),
-        ),
-      );
+      // No SnackBar here
     }
 
     void handleTopUpSubmit() async {
@@ -34,24 +30,17 @@ class WalletTopUp extends StatelessWidget {
 
         try {
           await insertTransaction(transaction); // Assuming insertTransaction function is defined in transaction_database.dart
+          // Show SnackBar only on successful top-up
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Top-up RM$_amount successfully!'),
             ),
           );
         } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-            ),
-          );
+          // You might log the error or handle it differently, but no SnackBar here
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please enter a valid amount.'),
-          ),
-        );
+        // Optional: Handle invalid amount input without showing SnackBar
       }
     }
 
