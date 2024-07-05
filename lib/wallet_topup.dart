@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'transaction_database.dart'; // Assuming you have this file for database operations
+import 'transaction_database.dart'; 
 
 class WalletTopUp extends StatelessWidget {
   const WalletTopUp({Key? key}) : super(key: key);
@@ -46,33 +46,44 @@ class WalletTopUp extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          'Wallet Top-Up',
-          style: TextStyle(
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 30.0),
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              const SizedBox(height: 24), // Adjusted spacing
+              // Added Padding widget with back button and title
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.arrow_back,
+                          color: const Color.fromARGB(255, 229, 229, 229)),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'Top Up',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 48), // Placeholder to balance the row
+                  ],
+                ),
+              ),
+              const SizedBox(height: 48), // Adjusted spacing
               const Text(
                 'Top Up Amount',
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.start,
                 style: TextStyle(
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
@@ -110,7 +121,7 @@ class WalletTopUp extends StatelessWidget {
                   FilteringTextInputFormatter.digitsOnly
                 ], // Accepts only digits
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 36),
               const Text(
                 'Select Amount:',
                 style: TextStyle(
@@ -198,7 +209,7 @@ class WalletTopUp extends StatelessWidget {
                     horizontal: 24,
                     vertical: 16,
                   ),
-                  minimumSize: Size(200, 50), // Control width and height
+                  minimumSize: Size(50, 50), // Control width and height
                 ),
                 child: const Text(
                   'Top Up',

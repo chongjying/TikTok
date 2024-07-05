@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok1/transaction_history.dart';
+import 'package:tiktok1/transfer_money.dart';
 import 'transaction.dart';
 import 'transaction_database.dart';
-import 'transaction_details.dart';
+import 'package:tiktok1/transaction_details.dart';
 import 'wallet_topup.dart';
 import 'live_rewards.dart'; 
 import 'coin_purchase.dart'; 
@@ -155,10 +157,8 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       _buildIconColumn(
                           context, Icons.add_box, 'Top Up', WalletTopUp()),
-                      _buildIconColumn(context, Icons.arrow_downward,
-                          'Receive Money', ReceiveMoneyPage()),
                       _buildIconColumn(context, Icons.arrow_upward,
-                          'Send Money', SendMoneyPage()),
+                          'Transfer Money', TransferMoneyPage()),
                       _buildIconColumn(context, Icons.monetization_on, 'Coin',
                           CoinPurchasePage()), // Update here
                       _buildIconColumn(context, Icons.card_giftcard,
@@ -188,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TransactionPage(),
+                        builder: (context) => TransactionHistoryPage(),
                       ),
                     );
                   },
@@ -240,15 +240,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                         trailing: Text(transaction.referenceNo.toString(),
                             style: const TextStyle(color: Colors.black)),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TransactionDetailPage(
-                                  transaction: transaction),
-                            ),
-                          );
-                        },
+                             onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TransactionDetailPage(transaction: transaction),
+                                ),
+                              );
+                            },
                       );
                     },
                   );
@@ -262,45 +261,8 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class ReceiveMoneyPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Receive Money'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Receive Money Page'),
-            ElevatedButton(
-              onPressed: () {
-                // Implement your top-up functionality here
-              },
-              child: const Text(''),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class SendMoneyPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Send Money'),
-      ),
-      body: const Center(
-        child: Text('Send Money Page'),
-      ),
-    );
-  }
-}
+
 
 class LiveRewardPage extends StatelessWidget {
   @override
@@ -311,20 +273,6 @@ class LiveRewardPage extends StatelessWidget {
       ),
       body: const Center(
         child: Text('LiveRewardPage'),
-      ),
-    );
-  }
-}
-
-class TransactionPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transactions'),
-      ),
-      body: const Center(
-        child: Text('Transactions Page'),
       ),
     );
   }
