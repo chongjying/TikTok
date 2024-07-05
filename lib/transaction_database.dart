@@ -1,34 +1,8 @@
-import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-
-Future<Database> initializeDatabase() async {
-  if (kIsWeb) {
-    // Change default factory on the web
-    databaseFactory = databaseFactoryFfiWeb;
-  }
-
-  final path = await getDatabasePath();
-  return openDatabase(
-    path,
-    onCreate: (db, version) {
-      return db.execute(
-        'CREATE TABLE transactions(id INTEGER PRIMARY KEY, referenceNo INTEGER, sender TEXT, receiver TEXT, details TEXT, created_time TEXT, status TEXT)',
-      );
-    },
-    version: 1,
-  );
-}
-
-Future<String> getDatabasePath() async {
-  if (kIsWeb) {
-    return 'transaction.db';
-  } else {
-    return join(await getDatabasesPath(), 'transaction.db');
-  }
-}
+import 'package:path/path.dart';
 
 class Transaction {
   final int? id;
@@ -38,6 +12,7 @@ class Transaction {
   final String details;
   final String createdTime;
   final String status;
+  final double amount;
 
   Transaction({
     this.id,
@@ -47,6 +22,7 @@ class Transaction {
     required this.details,
     required this.createdTime,
     required this.status,
+    required this.amount,
   });
 
   Map<String, dynamic> toMap() {
@@ -56,46 +32,44 @@ class Transaction {
       'sender': sender,
       'receiver': receiver,
       'details': details,
+      'amount': amount,
       'created_time': createdTime,
       'status': status,
     };
   }
+}
 
-  Transaction copyWith({
-    int? id,
-    int? referenceNo,
-    String? sender,
-    String? receiver,
-    String? details,
-    String? createdTime,
-    String? status,
-  }) {
-    return Transaction(
-      id: id ?? this.id,
-      referenceNo: referenceNo ?? this.referenceNo,
-      sender: sender ?? this.sender,
-      receiver: receiver ?? this.receiver,
-      details: details ?? this.details,
-      createdTime: createdTime ?? this.createdTime,
-      status: status ?? this.status,
+Future<void> initializeDatabaseFactory() async {
+  sqfliteFfiInit();
+  if(kIsWeb){
+    databaseFactory = databaseFactoryFfiWeb;
+  }
+
+}
+
+Future<Database> initializeDatabase() async {
+  await initializeDatabaseFactory();
+
+  final path = join(await getDatabasesPath(), 'transaction.db');
+    return await databaseFactory.openDatabase(
+      path,
+      options: OpenDatabaseOptions(
+        onCreate: (db, version) async {
+          await db.execute(
+            'CREATE TABLE transactions(id INTEGER PRIMARY KEY, referenceNo INTEGER, sender TEXT, receiver TEXT, details TEXT, amount REAL, created_time TEXT, status TEXT)',
+          );
+        },
+        onOpen: (db) async {
+          // Optional: Handle database open events
+        },
+        version: 1,
+      ),
     );
-  }
-
-  @override
-  String toString() {
-    return 'Transaction{id: $id, referenceNo: $referenceNo, sender: $sender, receiver: $receiver, details: $details, createdTime: $createdTime, status: $status}';
-  }
 }
 
-Future<void> insertTransaction(Database db, Transaction transaction) async {
-  await db.insert(
-    'transactions',
-    transaction.toMap(),
-    conflictAlgorithm: ConflictAlgorithm.replace,
-  );
-}
 
-Future<List<Transaction>> getTransactions(Database db) async {
+Future<List<Transaction>> getTransactions() async {
+  final Database db = await initializeDatabase();
   final List<Map<String, dynamic>> maps = await db.query('transactions');
 
   return List.generate(maps.length, (i) {
@@ -105,25 +79,20 @@ Future<List<Transaction>> getTransactions(Database db) async {
       sender: maps[i]['sender'],
       receiver: maps[i]['receiver'],
       details: maps[i]['details'],
+      amount: maps[i]['amount'],
       createdTime: maps[i]['created_time'],
       status: maps[i]['status'],
     );
   });
 }
 
-Future<void> updateTransaction(Database db, Transaction transaction) async {
-  await db.update(
+Future<void> insertTransaction(Transaction transaction) async {
+  final Database db = await initializeDatabase();
+
+  await db.insert(
     'transactions',
     transaction.toMap(),
-    where: 'id = ?',
-    whereArgs: [transaction.id],
+    conflictAlgorithm: ConflictAlgorithm.replace,
   );
 }
 
-Future<void> deleteTransaction(Database db, int id) async {
-  await db.delete(
-    'transactions',
-    where: 'id = ?',
-    whereArgs: [id],
-  );
-}
