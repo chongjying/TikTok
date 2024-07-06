@@ -234,7 +234,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Text(transaction.createdTime,
                                 style: const TextStyle(color: Colors.grey)),
-                            Text('\$$formattedAmount',
+                            Text('RM$formattedAmount',
                                 style: const TextStyle(color: Colors.black)),
                           ],
                         ),
@@ -273,32 +273,6 @@ class LiveRewardPage extends StatelessWidget {
       ),
       body: const Center(
         child: Text('LiveRewardPage'),
-      ),
-    );
-  }
-}
-
-class TransactionDetailPage extends StatelessWidget {
-  final Transaction transaction;
-
-  const TransactionDetailPage({required this.transaction});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transaction Detail'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Details: ${transaction.details}'),
-            Text('Amount: \$${transaction.amount.toStringAsFixed(2)}'),
-            Text('Reference No: ${transaction.referenceNo}'),
-            Text('Created Time: ${transaction.createdTime}'),
-          ],
-        ),
       ),
     );
   }

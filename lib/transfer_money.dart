@@ -1,9 +1,9 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:tiktok1/homepage.dart';
-import 'transaction_database.dart'; // Make sure this file exists and has the necessary methods/classes
-import 'package:fl_chart/fl_chart.dart'; // Importing fl_chart package
+import 'package:fl_chart/fl_chart.dart';
+import 'transaction_database.dart' as db;
+import 'transaction_database.dart';
+import 'transaction_details.dart';
 
 class TransferMoneyPage extends StatefulWidget {
   const TransferMoneyPage({Key? key}) : super(key: key);
@@ -13,8 +13,10 @@ class TransferMoneyPage extends StatefulWidget {
 }
 
 class _TransferMoneyPageState extends State<TransferMoneyPage> {
-  late Future<List<Transaction>> _transactions;
-  int tiktokPoints = 1001; // Example TikTok points
+  late Future<List<db.Transaction>> _transactions;
+  int tiktokPoints = 1001;
+  final TextEditingController _qrController =
+      TextEditingController(text: "Your QR Data here");
 
   @override
   void initState() {
@@ -22,8 +24,8 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
     _transactions = _fetchTransactions();
   }
 
-  Future<List<Transaction>> _fetchTransactions() async {
-    return getTransactions(); // Replace with your method to fetch transactions
+  Future<List<db.Transaction>> _fetchTransactions() async {
+    return getTransactions();
   }
 
   @override
@@ -62,20 +64,25 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
                 ],
               ),
               const SizedBox(height: 40),
-              // Pie Chart Integration
               const Text(
                 'This month',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
               const SizedBox(height: 20),
-              PieChartWidget(), // Adding the PieChartWidget
+              PieChartWidget(),
               const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildIconColumn(context, Icons.qr_code, 'QR Code', QRCodePage()),
-                  _buildIconColumn(context, Icons.account_balance, 'Send to Bank', SelectBankPage()),
-                  _buildIconColumn(context, Icons.contact_page, 'Send to Contact', SelectContactPage()), 
+                  /*_buildIconColumn(context, Icons.qr_code, 'QR Code',
+                      GenerateQRCodePage(controller: _qrController)),*/
+                  _buildIconColumn(context, Icons.account_balance,
+                      'Send to Bank', SelectBankPage()),
+                  _buildIconColumn(context, Icons.contact_page,
+                      'Send to Contact', SelectContactPage()),
                 ],
               ),
               const SizedBox(height: 40),
@@ -115,7 +122,7 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: FutureBuilder<List<Transaction>>(
+                child: FutureBuilder<List<db.Transaction>>(
                   future: _transactions,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -144,7 +151,8 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
                                 Text(transaction.createdTime,
                                     style: const TextStyle(color: Colors.grey)),
                                 Text('\$$formattedAmount',
-                                    style: const TextStyle(color: Colors.white)),
+                                    style:
+                                        const TextStyle(color: Colors.white)),
                               ],
                             ),
                             trailing: Text(transaction.referenceNo.toString(),
@@ -172,7 +180,8 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
     );
   }
 
-  Widget _buildIconColumn(BuildContext context, IconData icon, String label, Widget page) {
+  Widget _buildIconColumn(
+      BuildContext context, IconData icon, String label, Widget page) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -184,7 +193,7 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, size: 40.0, color: Colors.white), // Adjusted to white for better visibility
+          Icon(icon, size: 40.0, color: Colors.white),
           Container(
             margin: const EdgeInsets.only(top: 8.0),
             child: Text(
@@ -192,7 +201,7 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
               style: const TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.w400,
-                color: Colors.white, // Adjusted to white for better visibility
+                color: Colors.white,
               ),
             ),
           ),
@@ -202,17 +211,15 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
   }
 }
 
-
-//Pie Chart
+// Pie Chart
 class PieChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Generate random data
     double spending = Random().nextInt(5000) + 1000;
     double income = Random().nextInt(10000) + 5000;
 
     return SizedBox(
-      height: 200, // Adjust the height as needed
+      height: 200,
       child: PieChart(
         PieChartData(
           sections: [
@@ -261,23 +268,6 @@ class PieChartWidget extends StatelessWidget {
   }
 }
 
-
-
-
-class QRCodePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('QR Code'),
-      ),
-      body: const Center(
-        child: Text('QR Code Page'),
-      ),
-    );
-  }
-}
-
 class SelectContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -306,7 +296,6 @@ class SelectBankPage extends StatelessWidget {
   }
 }
 
-
 class TransactionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -316,33 +305,6 @@ class TransactionPage extends StatelessWidget {
       ),
       body: const Center(
         child: Text('Transactions Page'),
-      ),
-    );
-  }
-}
-
-
-class TransactionDetailPage extends StatelessWidget {
-  final Transaction transaction;
-
-  const TransactionDetailPage({required this.transaction});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transaction Detail'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Details: ${transaction.details}'),
-            Text('Amount: \$${transaction.amount.toStringAsFixed(2)}'),
-            Text('Reference No: ${transaction.referenceNo}'),
-            Text('Created Time: ${transaction.createdTime}'),
-          ],
-        ),
       ),
     );
   }

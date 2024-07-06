@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'transaction_database.dart'; 
+import 'transaction_database.dart';
 
 class WalletTopUp extends StatelessWidget {
   const WalletTopUp({Key? key}) : super(key: key);
@@ -36,12 +36,15 @@ class WalletTopUp extends StatelessWidget {
               content: Text('Top-up RM$_amount successfully!'),
             ),
           );
+          Navigator.pop(context, true); // Return true to indicate success
         } catch (e) {
-          // You might log the error or handle it differently, but no SnackBar here
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error processing transaction!', style: TextStyle(color: Colors.red),),
+            ),
+          );
         }
-      } else {
-        // Optional: Handle invalid amount input without showing SnackBar
-      }
+      } 
     }
 
     return Scaffold(
