@@ -8,10 +8,12 @@ class CoinPurchasePage extends StatefulWidget {
 
 class _CoinPurchasePageState extends State<CoinPurchasePage> {
   int? selectedIndex;
+  String selectedCoinAmount = '0';
 
-  void onBoxSelected(int index) {
+  void onBoxSelected(int index, String coinAmount) {
     setState(() {
       selectedIndex = index;
+      selectedCoinAmount = coinAmount;
     });
   }
 
@@ -88,7 +90,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
                   SizedBox(height: 10),
                   Center(
                     child: Text(
-                      '0',
+                      selectedCoinAmount,
                       style: TextStyle(
                         fontSize: 30,
                         color: const Color.fromARGB(255, 255, 255, 255),
@@ -243,7 +245,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
 class SelectableBox extends StatelessWidget {
   final int index;
   final bool isSelected;
-  final Function(int) onTap;
+  final Function(int, String) onTap;
   final String imagePath;
   final String coinAmount;
   final String price;
@@ -261,7 +263,7 @@ class SelectableBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTap(index),
+      onTap: () => onTap(index, coinAmount),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 5.0),
         decoration: BoxDecoration(

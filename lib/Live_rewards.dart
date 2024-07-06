@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'withdraw_page.dart'; 
+import 'withdraw_page.dart';
 
 class LiveRewardScreen extends StatelessWidget {
   @override
@@ -77,31 +77,12 @@ class LiveRewardScreen extends StatelessWidget {
                   ),
                   Column(
                     children: [
-                      Icon(Icons.monetization_on, size: 40, color: Colors.white),
+                      Icon(Icons.money, size: 40, color: Colors.white),
                       Text(
-                        'Coins',
+                        'Withdraw',
                         style: TextStyle(color: Colors.white),
                       ),
                     ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WithdrawScreen(),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.money, size: 40, color: Colors.white),
-                        Text(
-                          'Withdraw',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),

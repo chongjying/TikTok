@@ -19,21 +19,43 @@ class _PaymentSelectionScreenState extends State<PaymentSelectionScreen> {
   final String _savedMethod = '0000 XXXX XXXX 0000';
 
   @override
-  Widget build(BuildContext context) {
+Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.black,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 30.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
-              'Select Payment Method',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: const Color.fromARGB(255, 229, 229, 229),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    'Payment Method',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 229, 229, 229),
+                    ),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 20),
             _buildPaymentOption('TikTok Wallet'),
-            _buildPaymentOption('Credit /Debit Card'),
-            _buildPaymentOption('Touch \'n Go ewallet'),
+            _buildPaymentOption('Credit / Debit Card'),
+            _buildPaymentOption('Touch \'n Go eWallet'),
             _buildPaymentOption('Online Banking'),
             _buildPaymentOption('Postpaid (Buy Now, Pay Later)'),
             SizedBox(height: 20),
@@ -43,7 +65,7 @@ class _PaymentSelectionScreenState extends State<PaymentSelectionScreen> {
             ),
             _buildPaymentOption('$_savedMethod Credit/Debit Card',
                 isSavedMethod: true),
-            Spacer(),
+            SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 onPressed: () {
