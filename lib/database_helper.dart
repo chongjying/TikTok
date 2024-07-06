@@ -1,32 +1,53 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 class DatabaseHelper {
   DatabaseHelper._();
   static final DatabaseHelper instance = DatabaseHelper._();
-  static Database? _database;
+  static Database? _accountDatabase;
+  static Database? _transactionDatabase;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-
-    // If the database does not exist, create it
-    _database = await _initDatabase();
-    return _database!;
+  // Initialize both databases
+  Future<void> initializeDatabases() async {
+    await initializeDatabaseFactory();
+    _accountDatabase = await _initAccountDatabase();
+    _transactionDatabase = await _initTransactionDatabase();
   }
 
-  static Future<Database> _initDatabase() async {
-    final String path = join(await getDatabasesPath(), 'lib/transaction.db');
+  // Initialize the database factory based on platform
+  Future<void> initializeDatabaseFactory() async {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+    /*if (kIsWeb) {
+      databaseFactory = databaseFactoryFfiWeb;
+    }*/
+  }
+
+  // Getters for account and transaction databases
+  Future<Database> get accountDatabase async {
+    await initializeDatabaseFactory();
+    if (_accountDatabase != null) return _accountDatabase!;
+    await initializeDatabases();
+    return _accountDatabase!;
+  }
+
+  Future<Database> get transactionDatabase async {
+    await initializeDatabaseFactory();
+    if (_transactionDatabase != null) return _transactionDatabase!;
+    await initializeDatabases();
+    return _transactionDatabase!;
+  }
+
+  // Initialize the transaction database
+  Future<Database> _initTransactionDatabase() async {
+    final String path = join(await getDatabasesPath(), 'transactions.db');
     return await openDatabase(
       path,
       version: 1,
       onCreate: (db, version) async {
-        await db.execute(
-          'CREATE TABLE IF NOT EXISTS accounts(userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, walletBalance REAL, coinBalance INTEGER, diamondBalance INTEGER, password TEXT)',
-        );
         await db.execute(
           'CREATE TABLE IF NOT EXISTS transactions(id INTEGER PRIMARY KEY AUTOINCREMENT, referenceNo INTEGER, userID INTEGER, sender TEXT, receiver TEXT, details TEXT, amount REAL, created_time TEXT, status TEXT)',
         );
@@ -34,16 +55,31 @@ class DatabaseHelper {
     );
   }
 
-  static Future<void> insertAccount(Account account) async {
-    final db = await DatabaseHelper.instance.database;
-    await db.insert('account', account.toMap());
+  // Initialize the account database
+  Future<Database> _initAccountDatabase() async {
+    final String path = join(await getDatabasesPath(), 'assets/account.db');
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute(
+          'CREATE TABLE IF NOT EXISTS accounts(userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, walletBalance REAL, coinBalance INTEGER, diamondBalance INTEGER, password TEXT)',
+        );
+      },
+    );
   }
 
-  static Future<Account?> getAccountByUsernameAndPassword(String username, String password) async {
-    if (_database == null) {
-      throw Exception("Database not initialized");
-    }
-    List<Map<String, dynamic>> maps = await _database!.query(
+  // Insert an account into the account database
+  static Future<void> insertAccount(Account account) async {
+    final db = await DatabaseHelper.instance.accountDatabase;
+    await db.insert('accounts', account.toMap());
+  }
+
+  // Retrieve an account by username and password
+  static Future<Account?> getAccountByUsernameAndPassword(
+      String username, String password) async {
+    final db = await DatabaseHelper.instance.accountDatabase;
+    List<Map<String, dynamic>> maps = await db.query(
       'accounts',
       where: 'username = ? AND password = ?',
       whereArgs: [username, password],
@@ -62,19 +98,18 @@ class DatabaseHelper {
       return null;
     }
   }
- static Future<double> getBalance(int userID) async {
-    if (_database == null) {
-      throw Exception("Database not initialized");
-    }
-    Account? account = await getAccountById(userID);
+
+  // Retrieve balance for a specific user ID
+  static Future<double> getBalance(int userID) async {
+    final db = await DatabaseHelper.instance.accountDatabase;
+    Account? account = await getAccountById(userID, db);
     return account?.walletBalance ?? 0.00;
   }
 
-  static Future<Account?> getAccountById(int userID) async {
-    if (_database == null) {
-      throw Exception("Database not initialized");
-    }
-    List<Map<String, dynamic>> maps = await _database!.query(
+  // Retrieve an account by user ID
+  static Future<Account?> getAccountById(int userID, [Database? db]) async {
+    db ??= await DatabaseHelper.instance.accountDatabase;
+    List<Map<String, dynamic>> maps = await db.query(
       'accounts',
       where: 'userID = ?',
       whereArgs: [userID],
@@ -94,11 +129,10 @@ class DatabaseHelper {
     }
   }
 
-  static Future<List<Transaction>> getTransactions() async {
-    if (_database == null) {
-      throw Exception("Database not initialized");
-    }
-    final List<Map<String, dynamic>> maps = await _database!.query('transactions');
+  // Retrieve transactions from the transaction database
+  Future<List<Transaction>> getTransactions() async {
+    final db = await DatabaseHelper.instance.transactionDatabase;
+    final List<Map<String, dynamic>> maps = await db.query('transactions');
 
     return List.generate(maps.length, (i) {
       return Transaction(
@@ -115,13 +149,15 @@ class DatabaseHelper {
     });
   }
 
+  // Insert a transaction into the transaction database
   static Future<void> insertTransaction(Transaction transaction) async {
-    final db = await DatabaseHelper.instance.database;
+    final db = await DatabaseHelper.instance.transactionDatabase;
     await db.insert('transactions', transaction.toMap());
   }
 
+  // Retrieve all accounts from the account database
   Future<List<Map<String, dynamic>>> getAccounts() async {
-    final Database db = await instance.database;
+    final db = await instance.accountDatabase;
     return await db.query('accounts');
   }
 }

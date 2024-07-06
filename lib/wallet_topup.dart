@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'transaction_database.dart';
+import 'package:tiktok1/database_helper.dart';
 
 class WalletTopUp extends StatelessWidget {
   const WalletTopUp({Key? key}) : super(key: key);
@@ -22,6 +22,7 @@ class WalletTopUp extends StatelessWidget {
           referenceNo: DateTime.now().millisecondsSinceEpoch,
           sender: 'User',
           receiver: 'TikTok Wallet',
+          userID: 1,
           details: 'Top-up RM$_amount',
           amount: _amount,
           createdTime: DateTime.now().toIso8601String(),
@@ -29,7 +30,7 @@ class WalletTopUp extends StatelessWidget {
         );
 
         try {
-          await insertTransaction(transaction); // Assuming insertTransaction function is defined in transaction_database.dart
+          await DatabaseHelper.insertTransaction(transaction); // Assuming insertTransaction function is defined in transaction_database.dart
           // Show SnackBar only on successful top-up
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

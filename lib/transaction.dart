@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'transaction_database.dart';
+import 'database_helper.dart';
 import 'transaction_details.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -19,7 +19,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<List<Transaction>> _fetchTransactions() async {
-    return getTransactions();
+    return DatabaseHelper.instance.getTransactions();
   }
 
   @override

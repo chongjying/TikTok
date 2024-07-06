@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok1/database_helper.dart';
 import 'package:tiktok1/transaction_history.dart';
 import 'package:tiktok1/transfer_money.dart';
-import 'transaction.dart';
-import 'transaction_database.dart';
 import 'package:tiktok1/transaction_details.dart';
 import 'wallet_topup.dart';
 import 'live_rewards.dart'; 
 import 'coin_purchase.dart'; 
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage(Account account, {Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -26,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<Transaction>> _fetchTransactions() async {
-    return getTransactions(); // Replace with your method to fetch transactions
+    return DatabaseHelper.instance.getTransactions();
   }
 
   Widget _buildIconColumn(

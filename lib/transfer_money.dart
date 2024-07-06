@@ -1,8 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'transaction_database.dart' as db;
-import 'transaction_database.dart';
+import 'package:tiktok1/database_helper.dart';
 import 'transaction_details.dart';
 
 class TransferMoneyPage extends StatefulWidget {
@@ -13,7 +12,7 @@ class TransferMoneyPage extends StatefulWidget {
 }
 
 class _TransferMoneyPageState extends State<TransferMoneyPage> {
-  late Future<List<db.Transaction>> _transactions;
+  late Future<List<Transaction>> _transactions;
   int tiktokPoints = 1001;
   final TextEditingController _qrController =
       TextEditingController(text: "Your QR Data here");
@@ -24,8 +23,8 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
     _transactions = _fetchTransactions();
   }
 
-  Future<List<db.Transaction>> _fetchTransactions() async {
-    return getTransactions();
+  Future<List<Transaction>> _fetchTransactions() async {
+    return DatabaseHelper.instance.getTransactions();
   }
 
   @override
@@ -122,7 +121,7 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: FutureBuilder<List<db.Transaction>>(
+                child: FutureBuilder<List<Transaction>>(
                   future: _transactions,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {

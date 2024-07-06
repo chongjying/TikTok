@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok1/database_helper.dart';
 import 'package:tiktok1/transaction_details.dart';
-import 'transaction_database.dart';
 import 'transaction.dart';
 import 'wallet_topup.dart';
 
@@ -21,7 +21,7 @@ class _TikTokWalletState extends State<TikTokWallet> {
   }
 
   Future<List<Transaction>> _fetchTransactions() async {
-    return getTransactions(); // Replace with your method to fetch transactions
+    return DatabaseHelper.instance.getTransactions(); 
   }
 
   @override

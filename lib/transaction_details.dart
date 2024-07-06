@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tiktok1/transaction_history.dart'; 
-import 'package:tiktok1/transaction_database.dart'; 
+import 'package:tiktok1/database_helper.dart';
 
 class TransactionDetailPage extends StatelessWidget {
   final Transaction transaction;
