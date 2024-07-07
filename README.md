@@ -1,16 +1,14 @@
-# tiktokwallet
+-------------------------         2024 TikTok TechJam           -------------------------
+-------------------------          Group: PotatoShake           -------------------------
+------------------------- Problem Statement: Reshaping Payments -------------------------
 
-A new Flutter project.
+Steps to run the project:
+1. After downloading the zipped file, extract and open terminal.
+2. Ensure all dependencies are installed by running 'flutter pub get'.
+3. As this app is best supported on Chrome for now, run' flutter run -d chrome' in order to test the application.
 
-## Getting Started
+Login credentials (for development purposes only):
+Username: Cherry
+Password: 123456
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+-----------------------------------------------------------------------------------------
