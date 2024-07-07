@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'payment.dart';
 
 class WithdrawScreen extends StatelessWidget {
+  final String totalBalance;
+  final String accumulatedDiamonds;
+
+  WithdrawScreen({required this.totalBalance, required this.accumulatedDiamonds});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,12 +66,16 @@ class WithdrawScreen extends StatelessWidget {
           Center(
             child: InkWell(
               onTap: () {
-                Navigator.push(
+                /*Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PaymentSelectionScreen(),
+                    builder: (context) => PaymentSelectionScreen(
+                      account: widget.account,
+                      price: totalBalance,
+                      itemAmount: accumulatedDiamonds,
+                    ),
                   ),
-                );
+                );*/
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(

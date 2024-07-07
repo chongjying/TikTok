@@ -1,20 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok1/database_helper.dart';
 import 'payment.dart';
 
 class CoinPurchasePage extends StatefulWidget {
+
+
   @override
   _CoinPurchasePageState createState() => _CoinPurchasePageState();
+    final Account account;
+
+  const CoinPurchasePage({Key? key, required this.account}) : super(key: key);
 }
 
 class _CoinPurchasePageState extends State<CoinPurchasePage> {
+  late Future<int> coinBalance;
   int? selectedIndex;
   String selectedCoinAmount = '0';
+  String selectedPrice = '0';
 
-  void onBoxSelected(int index, String coinAmount) {
+  @override
+  void initState() {
+    super.initState();
+    coinBalance = _fetchCoinBalance();
+  }
+
+  void onBoxSelected(int index, String coinAmount, String price) {
     setState(() {
       selectedIndex = index;
       selectedCoinAmount = coinAmount;
+      selectedPrice = price.replaceAll('RM ', '').trim();
     });
+  }
+
+  Future<int> _fetchCoinBalance() async {
+    // Ensure userID is not null before passing to DatabaseHelper.getBalance()
+    if (widget.account.userID != null) {
+      return DatabaseHelper.getCoinBalance(widget.account.userID!);
+    } else {
+      // Handle the case where userID is null (you might want to return a default value or throw an error)
+      throw Exception('User ID is null.');
+    }
   }
 
   @override
@@ -22,8 +47,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 0, 0, 0),
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-            vertical: 40.0), // Overall padding for vertical centering
+        padding: const EdgeInsets.symmetric(vertical: 40.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -58,10 +82,8 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
             // Coin Balance Row
             SizedBox(height: 20),
             Container(
-              margin: const EdgeInsets.symmetric(
-                  horizontal: 20.0), // Horizontal margin
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 41, 41, 41),
                 borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -89,12 +111,41 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
                   ),
                   SizedBox(height: 10),
                   Center(
-                    child: Text(
-                      selectedCoinAmount,
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                      ),
+                    child: FutureBuilder<int>(
+                      future: coinBalance,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text(
+                            'Error: ${snapshot.error}',
+                            style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          );
+                        } else if (snapshot.hasData) {
+                          final balance = snapshot.data!;
+                          return Text(
+                            '${balance}',
+                            style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          );
+                        } else {
+                          return Text(
+                            'Loading...', // Placeholder text while waiting for data
+                            style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                   SizedBox(height: 10),
@@ -103,11 +154,11 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
             ),
             // Gap between the rows
             SizedBox(
-                height: 20), // This will show the Scaffold's background color
+              height: 20,
+            ),
             // Selection Boxes Row
             Container(
-              margin: const EdgeInsets.symmetric(
-                  horizontal: 20.0), // Horizontal margin
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 41, 41, 41),
@@ -203,7 +254,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
                 ],
               ),
             ),
-            // Withdraw Button
+            // Purchase Button
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Center(
@@ -212,7 +263,11 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PaymentSelectionScreen(),
+                        builder: (context) => PaymentSelectionScreen(
+                          account: widget.account,
+                          price: selectedPrice,
+                          itemAmount: selectedCoinAmount,
+                        ),
                       ),
                     );
                   },
@@ -245,7 +300,7 @@ class _CoinPurchasePageState extends State<CoinPurchasePage> {
 class SelectableBox extends StatelessWidget {
   final int index;
   final bool isSelected;
-  final Function(int, String) onTap;
+  final Function(int, String, String) onTap;
   final String imagePath;
   final String coinAmount;
   final String price;
@@ -263,7 +318,7 @@ class SelectableBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTap(index, coinAmount),
+      onTap: () => onTap(index, coinAmount, price),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 5.0),
         decoration: BoxDecoration(
@@ -293,7 +348,7 @@ class SelectableBox extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    imagePath, // Replace with your image path
+                    imagePath,
                     width: 30,
                     height: 30,
                   ),

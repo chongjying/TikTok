@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:tiktok1/database_helper.dart';
+import 'database_helper.dart';
 import 'homepage.dart';
+import 'account_table_page.dart';
 
 Future<void> main() async {
+  sqfliteFfiInit(); // Initialize FFI
   await DatabaseHelper.instance.initializeDatabases();
+  await DatabaseHelper.instance.initializeSampleData(); // Initialize sample data
+
+  // Fetch all accounts from the database
+  List<Account> accounts = await DatabaseHelper.instance.getAllAccounts();
+
+  // Print table header
+  print('UserID | Username | Wallet Balance | Coin Balance | Diamond Balance | Password');
+
+  // Print each row of the accounts table
+  for (var account in accounts) {
+    print('${account.userID} | ${account.username} | ${account.walletBalance} | ${account.coinBalance} | ${account.diamondBalance} | ${account.password}');
+  }
   runApp(const MyApp());
 }
 
@@ -17,7 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'TikTok Wallet',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color.fromARGB(255, 255, 255, 255),
+          seedColor: const Color.fromARGB(255, 255, 255, 255),
           brightness: Brightness.dark,
         ),
         scaffoldBackgroundColor: Colors.black,
@@ -106,7 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         if (account != null) {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage(account)),
+                            MaterialPageRoute(
+                              builder: (context) => HomePage(account: account),
+                            ),
                           );
                         } else {
                           setState(() {
@@ -134,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Image.asset('assets/Tiktok_Icon.png', width: 50, height: 50),
                       const SizedBox(width: 10),
                       const Text(
-                        'Sign in with TikTok',
+                        'Sign in',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -147,8 +163,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (_errorMessage.isNotEmpty)
                   Text(
                     _errorMessage,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AccountTablePage()),
+                    );
+                  },
+                  child: const Text('Register User'),
+                ),
               ],
             ),
           ),

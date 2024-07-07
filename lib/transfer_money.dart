@@ -1,11 +1,18 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:tiktok1/database_helper.dart';
+import 'package:tiktok1/transaction_history.dart';
+
 import 'transaction_details.dart';
+import 'package:flutter/material.dart';
+import 'package:tiktok1/database_helper.dart';
+import 'package:tiktok1/homepage.dart';
+import 'package:fl_chart/fl_chart.dart'; // Importing fl_chart package
+import 'qr_code_scanner.dart';
+import 'send_contact.dart';
+import 'send_bank.dart';
 
 class TransferMoneyPage extends StatefulWidget {
-  const TransferMoneyPage({Key? key}) : super(key: key);
+  final Account account;
+  const TransferMoneyPage({Key? key, required this.account}) : super(key: key);
 
   @override
   _TransferMoneyPageState createState() => _TransferMoneyPageState();
@@ -13,9 +20,7 @@ class TransferMoneyPage extends StatefulWidget {
 
 class _TransferMoneyPageState extends State<TransferMoneyPage> {
   late Future<List<Transaction>> _transactions;
-  int tiktokPoints = 1001;
-  final TextEditingController _qrController =
-      TextEditingController(text: "Your QR Data here");
+  int tiktokPoints = 1001; // Example TikTok points
 
   @override
   void initState() {
@@ -63,6 +68,7 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
                 ],
               ),
               const SizedBox(height: 40),
+              // Pie Chart Integration
               const Text(
                 'This month',
                 style: TextStyle(
@@ -71,13 +77,13 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
                     color: Colors.white),
               ),
               const SizedBox(height: 20),
-              PieChartWidget(),
+              PieChartWidget(), // Adding the PieChartWidget
               const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  /*_buildIconColumn(context, Icons.qr_code, 'QR Code',
-                      GenerateQRCodePage(controller: _qrController)),*/
+                  _buildIconColumn(
+                      context, Icons.qr_code, 'QR Code', QRScannerPage()),
                   _buildIconColumn(context, Icons.account_balance,
                       'Send to Bank', SelectBankPage()),
                   _buildIconColumn(context, Icons.contact_page,
@@ -103,7 +109,7 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TransactionPage(),
+                            builder: (context) => const TransactionHistoryPage(),
                           ),
                         );
                       },
@@ -135,7 +141,7 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
                       final transactions = snapshot.data!;
                       return ListView.builder(
                         itemCount:
-                            transactions.length > 3 ? 3 : transactions.length,
+                            transactions.length > 5 ? 5 : transactions.length,
                         itemBuilder: (context, index) {
                           final transaction = transactions[index];
                           String formattedAmount =
@@ -192,7 +198,9 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, size: 40.0, color: Colors.white),
+          Icon(icon,
+              size: 40.0,
+              color: Colors.white), // Adjusted to white for better visibility
           Container(
             margin: const EdgeInsets.only(top: 8.0),
             child: Text(
@@ -200,7 +208,7 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
               style: const TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.w400,
-                color: Colors.white,
+                color: Colors.white, // Adjusted to white for better visibility
               ),
             ),
           ),
@@ -210,15 +218,16 @@ class _TransferMoneyPageState extends State<TransferMoneyPage> {
   }
 }
 
-// Pie Chart
+//Pie Chart
 class PieChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Generate random data
     double spending = Random().nextInt(5000) + 1000;
     double income = Random().nextInt(10000) + 5000;
 
     return SizedBox(
-      height: 200,
+      height: 200, // Adjust the height as needed
       child: PieChart(
         PieChartData(
           sections: [
@@ -248,63 +257,27 @@ class PieChartWidget extends StatelessWidget {
           sectionsSpace: 4,
           centerSpaceRadius: 40,
           pieTouchData: PieTouchData(
-            touchCallback: (FlTouchEvent event, pieTouchResponse) {
-              if (pieTouchResponse != null &&
-                  pieTouchResponse.touchedSection != null) {
-                final touchedIndex =
-                    pieTouchResponse.touchedSection!.touchedSectionIndex;
-                if (touchedIndex == 0) {
-                  print('Spending was touched');
-                } else if (touchedIndex == 1) {
-                  print('Income was touched');
+           touchCallback: (FlTouchEvent event, pieTouchResponse) {
+              // Check if the touch event is a tap up event
+              if (event is FlTapUpEvent) {
+                if (pieTouchResponse != null &&
+                    pieTouchResponse.touchedSection != null) {
+                  final touchedIndex =
+                      pieTouchResponse.touchedSection!.touchedSectionIndex;
+                  if (touchedIndex == 0) {
+                    print('Spending was touched');
+                  } else if (touchedIndex == 1) {
+                    print('Income was touched');
+                  }
                 }
               }
             },
-          ),
         ),
       ),
-    );
-  }
-}
-
-class SelectContactPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Send to Contact'),
-      ),
-      body: const Center(
-        child: Text('Select Contact Page'),
       ),
     );
   }
 }
 
-class SelectBankPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Send to Bank'),
-      ),
-      body: const Center(
-        child: Text('Select Bank Page'),
-      ),
-    );
-  }
-}
 
-class TransactionPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transactions'),
-      ),
-      body: const Center(
-        child: Text('Transactions Page'),
-      ),
-    );
-  }
-}
+

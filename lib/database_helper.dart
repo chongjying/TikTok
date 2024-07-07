@@ -19,11 +19,12 @@ class DatabaseHelper {
 
   // Initialize the database factory based on platform
   Future<void> initializeDatabaseFactory() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-    /*if (kIsWeb) {
+    if (kIsWeb) {
       databaseFactory = databaseFactoryFfiWeb;
-    }*/
+    } else {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
   }
 
   // Getters for account and transaction databases
@@ -74,8 +75,80 @@ class DatabaseHelper {
     final db = await DatabaseHelper.instance.accountDatabase;
     await db.insert('accounts', account.toMap());
   }
+  Future<void> initializeSampleData() async {
+    final db = await instance.accountDatabase;
+    final List<Map<String, dynamic>> maps = await db.query('accounts');
 
-  // Retrieve an account by username and password
+    if (maps.isEmpty) {
+      // Insert sample data if the table is empty
+      await db.insert('accounts', {
+        'username': 'Cherry',
+        'walletBalance': 1100.0,
+        'coinBalance': 500,
+        'diamondBalance': 50,
+        'password': '123456',
+      });
+    }
+  }
+
+  // Update account balance method
+  Future<double> updateAccountBalance(int userID, double amount) async {
+    final db = await DatabaseHelper.instance.accountDatabase;
+    double currentBalance = await getBalance(userID);
+    // Calculate new balance
+    double newBalance = currentBalance + amount;
+    
+    // Update the balance in the database
+    await db.rawUpdate(
+      'UPDATE accounts SET walletBalance = ? WHERE userID = ?',
+      [newBalance, userID],
+    );
+    
+    return newBalance;
+  }
+
+  // Update account balance method
+  Future<double> deductAccountBalance(int userID, double amount) async {
+    final db = await DatabaseHelper.instance.accountDatabase;
+    double currentBalance = await getBalance(userID);
+    // Calculate new balance
+    double newBalance = currentBalance - amount;
+    
+    // Update the balance in the database
+    await db.rawUpdate(
+      'UPDATE accounts SET walletBalance = ? WHERE userID = ?',
+      [newBalance, userID],
+    );
+    
+    return newBalance;
+  }
+
+ 
+
+    // Retrieve balance for a specific user ID
+  static Future<int> getCoinBalance(int userID) async {
+    final db = await DatabaseHelper.instance.accountDatabase;
+    Account? account = await getAccountById(userID, db);
+    return account?.coinBalance ?? 0;
+  }
+
+  // Update account balance method
+  Future<int> addCoinBalance(int userID, int coin) async {
+    final db = await DatabaseHelper.instance.accountDatabase;
+    int coinBalance = await getCoinBalance(userID);
+    // Calculate new balance
+    int newCoinBalance = coinBalance + coin;
+    
+    // Update the balance in the database
+    await db.rawUpdate(
+      'UPDATE accounts SET coinBalance = ? WHERE userID = ?',
+      [newCoinBalance, userID],
+    );
+    
+    return newCoinBalance;
+  }
+
+// Retrieve an account by username and password
   static Future<Account?> getAccountByUsernameAndPassword(
       String username, String password) async {
     final db = await DatabaseHelper.instance.accountDatabase;
@@ -86,14 +159,7 @@ class DatabaseHelper {
     );
 
     if (maps.isNotEmpty) {
-      return Account(
-        userID: maps.first['userID'],
-        username: maps.first['username'],
-        walletBalance: maps.first['walletBalance'],
-        coinBalance: maps.first['coinBalance'],
-        diamondBalance: maps.first['diamondBalance'],
-        password: maps.first['password'],
-      );
+      return Account.fromMap(maps.first);
     } else {
       return null;
     }
@@ -116,18 +182,21 @@ class DatabaseHelper {
     );
 
     if (maps.isNotEmpty) {
-      return Account(
-        userID: maps.first['userID'],
-        username: maps.first['username'],
-        walletBalance: maps.first['walletBalance'],
-        coinBalance: maps.first['coinBalance'],
-        diamondBalance: maps.first['diamondBalance'],
-        password: maps.first['password'],
-      );
+      return Account.fromMap(maps.first);
     } else {
       return null;
     }
   }
+
+  static Future<void> updateAccount(Account account) async {
+  final db = await DatabaseHelper.instance.accountDatabase;
+  await db.update(
+    'accounts',
+    account.toMap(),
+    where: 'userID = ?',
+    whereArgs: [account.userID],
+  );
+}
 
   // Retrieve transactions from the transaction database
   Future<List<Transaction>> getTransactions() async {
@@ -138,7 +207,7 @@ class DatabaseHelper {
       return Transaction(
         id: maps[i]['id'],
         referenceNo: maps[i]['referenceNo'],
-        userID: maps[i]['userID'], // Foreign key
+        userID: maps[i]['userID'],
         sender: maps[i]['sender'],
         receiver: maps[i]['receiver'],
         details: maps[i]['details'],
@@ -156,16 +225,28 @@ class DatabaseHelper {
   }
 
   // Retrieve all accounts from the account database
-  Future<List<Map<String, dynamic>>> getAccounts() async {
+  Future<List<Account>> getAllAccounts() async {
     final db = await instance.accountDatabase;
-    return await db.query('accounts');
+    final List<Map<String, dynamic>> maps = await db.query('accounts');
+
+    return List.generate(maps.length, (i) {
+      return Account(
+        userID: maps[i]['userID'],
+        username: maps[i]['username'],
+        walletBalance: maps[i]['walletBalance'],
+        coinBalance: maps[i]['coinBalance'],
+        diamondBalance: maps[i]['diamondBalance'],
+        password: maps[i]['password'],
+      );
+    });
   }
+
 }
 
 class Transaction {
   final int? id;
   final int referenceNo;
-  final int userID; // Foreign key
+  final int userID;
   final String sender;
   final String receiver;
   final String details;
@@ -203,9 +284,9 @@ class Transaction {
 class Account {
   final int? userID;
   final String username;
-  final double walletBalance;
-  final int coinBalance;
-  final int diamondBalance;
+  double walletBalance;
+  int coinBalance;
+  int diamondBalance;
   final String password;
 
   Account({
@@ -216,6 +297,18 @@ class Account {
     required this.diamondBalance,
     required this.password,
   });
+
+  // Define a factory method to create an Account object from a map
+  factory Account.fromMap(Map<String, dynamic> map) {
+    return Account(
+      userID: map['userID'],
+      username: map['username'],
+      walletBalance: map['walletBalance'],
+      coinBalance: map['coinBalance'],
+      diamondBalance: map['diamondBalance'],
+      password: map['password'],
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -228,3 +321,4 @@ class Account {
     };
   }
 }
+

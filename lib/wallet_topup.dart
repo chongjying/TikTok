@@ -14,40 +14,69 @@ class WalletTopUp extends StatelessWidget {
       // No SnackBar here
     }
 
-    void handleTopUpSubmit() async {
-      double _amount = double.tryParse(_amountController.text) ?? 0;
-      if (_amount > 0) {
-        // Insert the transaction into the database
+  void handleTopUpSubmit() async {
+  double _amount = double.tryParse(_amountController.text) ?? 0;
+  if (_amount > 0) {
+    try {
+      // 1. Retrieve current account details
+      Account? currentAccount = await DatabaseHelper.getAccountById(1); // Assuming user ID is 1
+
+      if (currentAccount != null) {
+        // 2. Calculate new balance after top-up
+        double newBalance = currentAccount.walletBalance + _amount;
+
+        // 3. Update the balance locally in the currentAccount instance
+        currentAccount.walletBalance = newBalance;
+
+        // 4. Update the balance in the database
+        await DatabaseHelper.updateAccount(currentAccount);
+
+        // 5. Insert the transaction into the database
         Transaction transaction = Transaction(
           referenceNo: DateTime.now().millisecondsSinceEpoch,
           sender: 'User',
           receiver: 'TikTok Wallet',
-          userID: 1,
+          userID: currentAccount.userID!,
           details: 'Top-up RM$_amount',
           amount: _amount,
           createdTime: DateTime.now().toIso8601String(),
           status: 'Completed',
         );
 
-        try {
-          await DatabaseHelper.insertTransaction(transaction); // Assuming insertTransaction function is defined in transaction_database.dart
-          // Show SnackBar only on successful top-up
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Top-up RM$_amount successfully!'),
-            ),
-          );
-          Navigator.pop(context, true); // Return true to indicate success
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error processing transaction!', style: TextStyle(color: Colors.red),),
-            ),
-          );
-        }
-      } 
-    }
+        await DatabaseHelper.insertTransaction(transaction);
 
+
+        // 6. Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Top-up RM$_amount successfully!'),
+          ),
+        );
+
+        // 7. Notify AccountTablePage to refresh
+        Navigator.pop(context, true); // Pop current page
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('User not found!'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error processing transaction!', style: TextStyle(color: Colors.red)),
+        ),
+      );
+    }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Invalid amount! Please enter a valid amount.'),
+      ),
+    );
+  }
+}
     return Scaffold(
       backgroundColor: Colors.black,
       body: SingleChildScrollView(

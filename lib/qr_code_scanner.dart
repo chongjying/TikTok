@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:tiktok1/qr_code_generator.dart';
 
 class QRScannerPage extends StatefulWidget {
   const QRScannerPage({Key? key}) : super(key: key);
@@ -86,7 +87,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ShowQRCodePage(),
+                          builder: (context) => const QRCodeGeneratorPage(),
                         ),
                       );
                     },
@@ -119,22 +120,3 @@ class _QRScannerPageState extends State<QRScannerPage> {
   }
 }
 
-class ShowQRCodePage extends StatelessWidget {
-  const ShowQRCodePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your QR Code'),
-      ),
-      body: Center(
-        child: QrImageView(
-          data: 'This is a simple QR code',
-          version: QrVersions.auto,
-          size: 200.0,
-        ),
-      ),
-    );
-  }
-}

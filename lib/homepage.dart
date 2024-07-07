@@ -1,14 +1,17 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:tiktok1/database_helper.dart';
 import 'package:tiktok1/transaction_history.dart';
 import 'package:tiktok1/transfer_money.dart';
 import 'package:tiktok1/transaction_details.dart';
 import 'wallet_topup.dart';
-import 'live_rewards.dart'; 
-import 'coin_purchase.dart'; 
+import 'live_rewards.dart';
+import 'coin_purchase.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage(Account account, {Key? key}) : super(key: key);
+  final Account account;
+
+  HomePage({required this.account});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -17,15 +20,27 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Future<List<Transaction>> _transactions;
   int tiktokPoints = 1001; // Example TikTok points
+  late double _walletBalance;
 
   @override
   void initState() {
     super.initState();
-    _transactions = _fetchTransactions();
+    _fetchTransactions();
+    _fetchBalance(); 
   }
 
-  Future<List<Transaction>> _fetchTransactions() async {
-    return DatabaseHelper.instance.getTransactions();
+  Future<void> _fetchTransactions() async {
+    List<Transaction> transactions = await DatabaseHelper.instance.getTransactions();
+    setState(() {
+      _transactions = Future.value(transactions);
+    });
+  }
+
+  Future<void> _fetchBalance() async {
+    double balance = await DatabaseHelper.getBalance(widget.account.userID!);
+    setState(() {
+      _walletBalance = balance;
+    });
   }
 
   Widget _buildIconColumn(
@@ -35,7 +50,11 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => page),
-        );
+        ).then((value) {
+          if (value != null && value) {
+            _fetchBalance(); // Update balance after returning from the page
+          }
+        });
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -65,7 +84,12 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ClipRRect(
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+              bottomLeft: Radius.circular(50),
+              bottomRight: Radius.circular(50),
+            ),
             child: Container(
               color: Colors.black,
               padding: const EdgeInsets.all(30.0),
@@ -75,8 +99,8 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'WELCOME, [XXX]', // Replace [XXX] with a dynamic name if needed
+                      Text(
+                        'WELCOME, ${widget.account.username}',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -90,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         iconSize: 38.0,
                         onPressed: () {
-                          // Navigate to TikTok Points page or implement functionality
+                          // Navigate to user profile or implement functionality
                         },
                       ),
                     ],
@@ -112,7 +136,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'RM 1234.56', // Replace with a dynamic number if needed
+                            _walletBalance != null
+                                ? 'RM ${_walletBalance.toStringAsFixed(2)}'
+                                : 'Loading...', // Display wallet balance dynamically
                             style: const TextStyle(
                               fontSize: 36,
                               fontWeight: FontWeight.bold,
@@ -124,6 +150,14 @@ class _HomePageState extends State<HomePage> {
                       GestureDetector(
                         onTap: () {
                           // Implement your top-up functionality here
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => WalletTopUp()),
+                          ).then((value) {
+                            if (value != null && value) {
+                              _fetchBalance(); // Update balance after top-up
+                            }
+                          });
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -157,9 +191,9 @@ class _HomePageState extends State<HomePage> {
                       _buildIconColumn(
                           context, Icons.add_box, 'Top Up', WalletTopUp()),
                       _buildIconColumn(context, Icons.arrow_upward,
-                          'Transfer Money', TransferMoneyPage()),
+                          'Transfer Money', TransferMoneyPage(account: widget.account)),
                       _buildIconColumn(context, Icons.monetization_on, 'Coin',
-                          CoinPurchasePage()), // Update here
+                          CoinPurchasePage(account: widget.account)), // Update here
                       _buildIconColumn(context, Icons.card_giftcard,
                           'Live Reward', LiveRewardScreen()), // Update here
                     ],
@@ -239,14 +273,15 @@ class _HomePageState extends State<HomePage> {
                         ),
                         trailing: Text(transaction.referenceNo.toString(),
                             style: const TextStyle(color: Colors.black)),
-                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TransactionDetailPage(transaction: transaction),
-                                ),
-                              );
-                            },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TransactionDetailPage(
+                                  transaction: transaction),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
@@ -255,23 +290,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-
-
-
-class LiveRewardPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Live Reward'),
-      ),
-      body: const Center(
-        child: Text('LiveRewardPage'),
       ),
     );
   }
