@@ -1,6 +1,11 @@
--------------------------         2024 TikTok TechJam           -------------------------
--------------------------          Group: PotatoShake           -------------------------
-------------------------- Problem Statement: Reshaping Payments -------------------------
+2024 TikTok TechJam           
+
+Group: PotatoShake          
+
+Problem Statement: Reshaping Payments 
+
+
+-------------------------------------------------------------------------------------------
 
 Steps to run the project:
 1. After downloading the zipped file, extract and open terminal.
